@@ -29,6 +29,7 @@ dependencies:
   youtube_player_flutter: ^9.1.1
   youtube_player_iframe: ^5.2.1
   font_awesome_flutter: ^10.7.0
+  qr_flutter: ^4.1.0
 
 dev_dependencies:
   flutter_test:
@@ -43,8 +44,19 @@ flutter:
     - assets/download1.jpg
     - assets/download3.jpg
     - assets/download2.jpg
-    - assets/download4.jpg
+    - assets/download5.jpg
+    - assets/download6.jpg
     - assets/mainphoto.jpg
+    - assets/pavithra.jpg
+    - assets/subbuanna.jpg
+    - assets/thiru.jpg
+    - assets/thiru1.jpg
+    - assets/dharani1.jpg
+    - assets/deepika.jpg
+    - assets/naveen.jpg
+    - assets/pavi.jpg
+    - assets/thiruqr.jpg
+    - assets/vamsi.jpg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
