@@ -30,7 +30,7 @@ class TributeScreen extends StatelessWidget {
     'assets/download.jpg',
     'assets/download5.jpg',
     'assets/download6.jpg',
-    'assets/download7.jpg'
+    'assets/download7.jpg',
   ];
 
   @override
@@ -535,6 +535,17 @@ class _FlightPathAnimationState extends State<FlightPathAnimation>
   }
 }
 
+// class SecurityVideoPopup extends StatefulWidget {
+//   const SecurityVideoPopup({super.key});
+//
+//   @override
+//   State<SecurityVideoPopup> createState() => _SecurityVideoPopupState();
+// }
+
+// 1. UPDATE YOUR BUILD COMMAND
+// Run this when deploying to GitHub Pages:
+// flutter build web --web-renderer canvaskit --release
+
 class SecurityVideoPopup extends StatefulWidget {
   const SecurityVideoPopup({super.key});
 
@@ -545,17 +556,18 @@ class SecurityVideoPopup extends StatefulWidget {
 class _SecurityVideoPopupState extends State<SecurityVideoPopup> {
   final TextEditingController _tokenController = TextEditingController();
   bool _isVerified = false;
-  late YoutubePlayerController _ytController;
 
-  @override
-  void initState() {
-    super.initState();
+  // Change: Initialize the controller only when verified to prevent
+  // background IFrame loading which crashes iOS Safari.
+  YoutubePlayerController? _ytController;
+
+  void _initializePlayer() {
     _ytController = YoutubePlayerController.fromVideoId(
       videoId: '7gwZVVKXPDY',
       autoPlay: true,
       params: const YoutubePlayerParams(
         showControls: true,
-        showFullscreenButton: true, // FULL SCREEN ENABLED
+        showFullscreenButton: true,
         mute: false,
         strictRelatedVideos: true,
       ),
@@ -567,30 +579,15 @@ class _SecurityVideoPopupState extends State<SecurityVideoPopup> {
     return AlertDialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      // Remove contentPadding if verified to prevent layout shifts
       contentPadding: _isVerified ? EdgeInsets.zero : const EdgeInsets.all(20),
       content: _isVerified
-          ? Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(15),
-                  child: AspectRatio(
-                    aspectRatio: 16 / 9,
-                    child: YoutubePlayer(controller: _ytController),
-                  ),
-                ),
-                Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Container(
-                    width: 140,
-                    height: 55,
-                    color: Colors.transparent,
-                    child: GestureDetector(
-                      onTap: () {}, // Swallows the tap event
-                    ),
-                  ),
-                ),
-              ],
+          ? SizedBox(
+              width: double.maxFinite,
+              child: AspectRatio(
+                aspectRatio: 16 / 9,
+                child: YoutubePlayer(controller: _ytController!),
+              ),
             )
           : Column(
               mainAxisSize: MainAxisSize.min,
@@ -619,15 +616,13 @@ class _SecurityVideoPopupState extends State<SecurityVideoPopup> {
       actions: [
         TextButton(
           onPressed: () => Navigator.pop(context),
-          child: Text(
-            _isVerified ? "Close" : "Cancel",
-            style: const TextStyle(color: Colors.grey),
-          ),
+          child: Text(_isVerified ? "Close" : "Cancel"),
         ),
         if (!_isVerified)
           ElevatedButton(
             onPressed: () {
               if (_tokenController.text == "1123") {
+                _initializePlayer(); // Initialize ONLY on success
                 setState(() => _isVerified = true);
               } else {
                 _showErrorPopup(context);
@@ -646,46 +641,156 @@ class _SecurityVideoPopupState extends State<SecurityVideoPopup> {
   @override
   void dispose() {
     _tokenController.dispose();
+    // Crucial: Close the controller to free up iOS memory
+    _ytController?.close();
     super.dispose();
   }
-
-  void _showErrorPopup(BuildContext context) {
-    showDialog(
-      context: context,
-      barrierDismissible: false, // User can't tap away
-      builder: (BuildContext context) {
-        // Auto-close after 3 seconds
-        Future.delayed(const Duration(seconds: 2), () {
-          if (Navigator.canPop(context)) {
-            Navigator.pop(context);
-          }
-        });
-
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(15),
-          ),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: const [
-              Icon(Icons.error_outline, color: Colors.red, size: 50),
-              SizedBox(height: 15),
-              Text(
-                "Wrong Token!",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              SizedBox(height: 5),
-              Text(
-                "Please think and try again for 4 digit token.",
-                textAlign: TextAlign.center,
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
 }
+
+void _showErrorPopup(BuildContext context) {
+  showDialog(
+    context: context,
+    barrierDismissible: false, // User can't tap away
+    builder: (BuildContext context) {
+      // Auto-close after 3 seconds
+      Future.delayed(const Duration(seconds: 2), () {
+        if (Navigator.canPop(context)) {
+          Navigator.pop(context);
+        }
+      });
+
+      return AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: const [
+            Icon(Icons.error_outline, color: Colors.red, size: 50),
+            SizedBox(height: 15),
+            Text(
+              "Wrong Token!",
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+            SizedBox(height: 5),
+            Text(
+              "Please think and try again for 4 digit token.",
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    },
+  );
+}
+
+// class _SecurityVideoPopupState extends State<SecurityVideoPopup> {
+//   final TextEditingController _tokenController = TextEditingController();
+//   bool _isVerified = false;
+//   late YoutubePlayerController _ytController;
+//
+//   @override
+//   void initState() {
+//     super.initState();
+//     _ytController = YoutubePlayerController.fromVideoId(
+//       videoId: '7gwZVVKXPDY',
+//       autoPlay: true,
+//       params: const YoutubePlayerParams(
+//         showControls: true,
+//         showFullscreenButton: true, // FULL SCREEN ENABLED
+//         mute: false,
+//         strictRelatedVideos: true,
+//       ),
+//     );
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return AlertDialog(
+//       backgroundColor: Colors.white,
+//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+//       contentPadding: _isVerified ? EdgeInsets.zero : const EdgeInsets.all(20),
+//       content: _isVerified
+//           ? Stack(
+//               children: [
+//                 ClipRRect(
+//                   borderRadius: BorderRadius.circular(15),
+//                   child: AspectRatio(
+//                     aspectRatio: 16 / 9,
+//                     child: YoutubePlayer(controller: _ytController),
+//                   ),
+//                 ),
+//                 Positioned(
+//                   right: 0,
+//                   top: 0,
+//                   child: Container(
+//                     width: 140,
+//                     height: 55,
+//                     color: Colors.transparent,
+//                     child: GestureDetector(
+//                       onTap: () {}, // Swallows the tap event
+//                     ),
+//                   ),
+//                 ),
+//               ],
+//             )
+//           : Column(
+//               mainAxisSize: MainAxisSize.min,
+//               children: [
+//                 const Icon(
+//                   Icons.lock_outline,
+//                   size: 50,
+//                   color: Colors.redAccent,
+//                 ),
+//                 const SizedBox(height: 15),
+//                 const Text(
+//                   "Enter Security Token",
+//                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+//                 ),
+//                 const SizedBox(height: 15),
+//                 TextField(
+//                   controller: _tokenController,
+//                   keyboardType: TextInputType.number,
+//                   decoration: const InputDecoration(
+//                     hintText: "enter D b security toke N ",
+//                     border: OutlineInputBorder(),
+//                   ),
+//                 ),
+//               ],
+//             ),
+//       actions: [
+//         TextButton(
+//           onPressed: () => Navigator.pop(context),
+//           child: Text(
+//             _isVerified ? "Close" : "Cancel",
+//             style: const TextStyle(color: Colors.grey),
+//           ),
+//         ),
+//         if (!_isVerified)
+//           ElevatedButton(
+//             onPressed: () {
+//               if (_tokenController.text == "1123") {
+//                 setState(() => _isVerified = true);
+//               } else {
+//                 _showErrorPopup(context);
+//               }
+//             },
+//             style: ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
+//             child: const Text(
+//               "Verify & Play",
+//               style: TextStyle(color: Colors.white),
+//             ),
+//           ),
+//       ],
+//     );
+//   }
+//
+//   @override
+//   void dispose() {
+//     _tokenController.dispose();
+//     super.dispose();
+//   }
+//
+
+//}
 
 class AttractiveUnlockButton extends StatefulWidget {
   const AttractiveUnlockButton({super.key});
