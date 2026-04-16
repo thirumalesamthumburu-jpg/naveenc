@@ -31,6 +31,10 @@ class TributeScreen extends StatelessWidget {
     'assets/download5.jpg',
     'assets/download6.jpg',
     'assets/download7.jpg',
+    'assets/download11.jpg',
+    'assets/download12.jpg',
+    'assets/download13.jpg',
+    'assets/download14.jpg',
   ];
 
   @override
