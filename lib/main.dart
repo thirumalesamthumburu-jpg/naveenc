@@ -35,6 +35,11 @@ class TributeScreen extends StatelessWidget {
     'assets/download12.jpg',
     'assets/download13.jpg',
     'assets/download14.jpg',
+    'assets/new21.jpeg',
+    'assets/new3.jpeg',
+    'assets/new4.jpeg',
+    'assets/new5.jpeg',
+    'assets/new6.jpeg',
   ];
 
   @override
@@ -127,6 +132,11 @@ class TributeScreen extends StatelessWidget {
                     "Your's Subbu",
                     "I’m really happy for you, brother. You truly deserve this opportunity. At the same time, I won’t lie—it feels a little heavy for me because we’ve been working together on the same project and I’ll miss that. Still, seeing you grow makes me proud. Go make the most of it and don’t forget us here...",
                     'assets/subbuanna.jpg',
+                  ),
+                  _buildQuoteCard(
+                    "Your's Pradeep",
+                    "We started as coworkers, but you're leaving as my brother. This office won't be the same without you, but I'm proud of the journey you're starting. You were there in my life as a brother for every happy and sad situation. All the best Champ... I'll miss you a lot.🫂",
+                    'assets/new1.jpeg',
                   ),
                   _buildQuoteCard(
                     "Your's Naveen",

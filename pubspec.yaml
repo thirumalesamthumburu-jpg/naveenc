@@ -63,6 +63,12 @@ flutter:
     - assets/download12.jpg
     - assets/download13.jpg
     - assets/download14.jpg
+    - assets/new1.jpeg
+    - assets/new21.jpeg
+    - assets/new3.jpeg
+    - assets/new4.jpeg
+    - assets/new5.jpeg
+    - assets/new6.jpeg
 
   # To add assets to your application, add an assets section, like this:
   # assets:
